@@ -8,12 +8,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONObject;
 
-import edu.jlu.cs.module.DBCall;
-import edu.jlu.cs.module.DecodeSave;
-import edu.jlu.cs.module.FacCall;
-import edu.jlu.cs.module.SaveUserImages2DB;
+
+
+import net.sf.json.JSONObject;
+
 
 public class CreateUser extends HttpServlet {
 
@@ -45,19 +44,12 @@ public class CreateUser extends HttpServlet {
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
-		response.setContentType("text/html");
+		response.setContentType("application/json");
 		PrintWriter out = response.getWriter();
-		out.println("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">");
-		out.println("<HTML>");
-		out.println("  <HEAD><TITLE>A Servlet</TITLE></HEAD>");
-		out.println("  <BODY>");
-		out.print("    hahaha ");
-		out.print(this.getClass());
-		out.println(",  dddd using the GET method");
-		out.println("  </BODY>");
-		out.println("</HTML>");
-		out.flush();
-		out.close();
+		JSONObject json=new JSONObject();
+		
+		out.println(request.getParameter("abc"));
+		
 	}
 
 	/**
@@ -73,7 +65,7 @@ public class CreateUser extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
-		DBCall dbcall=new DBCall();
+		/*DBCall dbcall=new DBCall();
 		FacCall facCall=new FacCall();
 		DecodeSave decodeSave=new DecodeSave();
 		int responseCode=500;
@@ -108,7 +100,7 @@ public class CreateUser extends HttpServlet {
 		String Message=dbjsonO.getString("message");
 		respJsonO.put("Message", Message);
 		respJsonO.put("code", responseCode);
-		response.setStatus(responseCode);
+		response.setStatus(responseCode);*/
 	}
 
 	/**
