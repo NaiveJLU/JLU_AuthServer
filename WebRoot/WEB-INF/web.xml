@@ -10,27 +10,29 @@
   <servlet>
     <description>This is the description of my J2EE component</description>
     <display-name>This is the display name of my J2EE component</display-name>
-    <servlet-name>CreateUser</servlet-name>
-    <servlet-class>edu.jlu.cs.servlet.CreateUser</servlet-class>
+    <servlet-name>Login</servlet-name>
+    <servlet-class>edu.jlu.cs.servlet.Login</servlet-class>
   </servlet>
   <servlet>
     <description>This is the description of my J2EE component</description>
     <display-name>This is the display name of my J2EE component</display-name>
-    <servlet-name>Login</servlet-name>
-    <servlet-class>edu.jlu.cs.servlet.Login</servlet-class>
+    <servlet-name>Register</servlet-name>
+    <servlet-class>edu.jlu.cs.servlet.Register</servlet-class>
   </servlet>
+
 
 
   <servlet-mapping>
     <servlet-name>JAX-RS Servlet</servlet-name>
     <url-pattern>/jaxrs/*</url-pattern>
   </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>CreateUser</servlet-name>
-    <url-pattern>/servlet/CreateUser</url-pattern>
-  </servlet-mapping>
+  
   <servlet-mapping>
     <servlet-name>Login</servlet-name>
-    <url-pattern>/servlet/Login</url-pattern>
+    <url-pattern>/login</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>Register</servlet-name>
+    <url-pattern>/register</url-pattern>
   </servlet-mapping>
 </web-app>

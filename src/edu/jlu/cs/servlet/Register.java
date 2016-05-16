@@ -8,14 +8,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import edu.jlu.cs.module.DBCall;
 import edu.jlu.cs.module.FacCall;
 
-public class Login extends HttpServlet {
-
+public class Register extends HttpServlet {
 	/**
 	 * 
 	 */
@@ -24,7 +24,7 @@ public class Login extends HttpServlet {
 	/**
 	 * Constructor of the object.
 	 */
-	public Login() {
+	public Register() {
 		super();
 	}
 
@@ -48,7 +48,7 @@ public class Login extends HttpServlet {
 	 */
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		response.getWriter().write("Hello");
+
 		response.setContentType("text/html");
 		PrintWriter out = response.getWriter();
 		out.println("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">");
@@ -76,19 +76,40 @@ public class Login extends HttpServlet {
 	 */
 	public void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+//		FileOutputStream fs = new FileOutputStream(new File("D:\\text.txt"));
+//		PrintStream p = new PrintStream(fs);
 		response.setContentType("application/json");
 		try{
 			DBCall dbCall=new DBCall();
 			FacCall facCall=new FacCall();
 			String imageJson=request.getReader().readLine();
 			JSONObject clientReq=new JSONObject(imageJson);
-			String pic=clientReq.getString("picture");
-			String usrId=clientReq.getString("userId");
-			String dbRes=dbCall.login(usrId);
-			
-			JSONObject dbJson=new JSONObject(dbRes);
-			boolean dbSuccess=dbJson.getBoolean("success");
-			if(dbSuccess==false)
+			String pic=clientReq.getString("pictures");
+			String facRes=facCall.register(imageJson);
+			JSONObject facJson=new JSONObject(facRes);
+			boolean facSuccess=facJson.getBoolean("success");
+			if(facSuccess==false)
+			{
+				response.setStatus(200);
+				PrintWriter out = null;
+				try{
+					out = response.getWriter();
+					out.append(facRes); 
+				}catch (IOException e) {  
+					e.printStackTrace();  
+				}finally{ 
+					if (out != null) {  
+						out.flush();
+						out.close();  
+					}
+				}
+				return;
+			}
+			String facilitatorIds=facJson.getString("facilitatorIds");
+			String dbRes=dbCall.register(facilitatorIds,pic);
+			JSONObject dbResJson=new JSONObject(dbRes);
+			boolean dbSuccess=dbResJson.getBoolean("success");
+			if(dbSuccess==true)
 			{
 				response.setStatus(200);
 				PrintWriter out = null;
@@ -105,22 +126,35 @@ public class Login extends HttpServlet {
 				}
 				return;
 			}
-			String facilitatorIds=dbJson.getString("facilitatorIds");
-			String facRes=facCall.login(facilitatorIds,pic);
-			response.setStatus(200);
-			PrintWriter out = null;
-			try{
-				out = response.getWriter();
-				out.append(facRes); 
-			}catch (IOException e) {  
-				e.printStackTrace();  
-			}finally{ 
-				if (out != null) {  
-					out.flush();
-					out.close();  
+			else
+			{
+				String errors=dbResJson.getString("errors");
+				JSONArray errorsJson=new JSONArray(errors);
+				JSONArray newrespJson=new JSONArray();
+				for(int i=1;i<=5;i++)
+				{
+					JSONObject tmp=errorsJson.getJSONObject(i-1);
+					tmp.put("pictureId", i);
+					newrespJson.put(i-1,tmp);
 				}
+				JSONObject respJson=new JSONObject();
+				respJson.put("success", false);
+				respJson.put("pictureErrors", newrespJson.toString());
+				response.setStatus(200);
+				PrintWriter out = null;
+				try{
+					out = response.getWriter();
+					out.append(respJson.toString()); 
+				}catch (IOException e) {  
+					e.printStackTrace();  
+				}finally{ 
+					if (out != null) {  
+						out.flush();
+						out.close();  
+					}
+				}
+				return;
 			}
-			return;
 		}catch(JSONException e) {
 			response.setStatus(500);//json¸ñÊ½Òì³£
 			e.printStackTrace();
