@@ -1,6 +1,13 @@
 package edu.jlu.cs.module;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
+
 import edu.jlu.cs.util.*;
+
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
@@ -38,13 +45,19 @@ public class DBCall extends HttpTools{
 	 * @param fac 
 	 * @param pic
 	 * @return 
+	 * @throws FileNotFoundException 
 	 */
-  public String register(String fac,String pic)
+  public String register(JSONArray fac,JSONArray pic) throws FileNotFoundException
   {
 	  String urlPath=Global.DBregister;
 	  JSONObject dbCallJson=new JSONObject();
 	  dbCallJson.put("facilitatorIds", fac);
 	  dbCallJson.put("pictures", pic);
+
+  	FileOutputStream fs = new FileOutputStream(new File("DBCallLog.txt"));
+		PrintStream p = new PrintStream(fs);
+		p.println(dbCallJson.toString());
+		p.close();
 	  String result = sendPostMessage(dbCallJson.toString(),urlPath); 
 	  return result;
   }
@@ -58,7 +71,7 @@ public class DBCall extends HttpTools{
   {
 	  String urlPath=Global.DBlogin;
 	  JSONObject dbCallJson=new JSONObject();
-	  dbCallJson.put("UserId", usrId);
+	  dbCallJson.put("userId", usrId);
 	  String result = sendPostMessage(dbCallJson.toString(),urlPath); 
 	  return result;
   }

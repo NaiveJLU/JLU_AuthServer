@@ -1,6 +1,8 @@
 package edu.jlu.cs.module;
 
 import edu.jlu.cs.util.*;
+
+import org.json.JSONArray;
 import org.json.JSONObject;
 
   
@@ -24,7 +26,7 @@ public class FacCall extends HttpTools{
    * @param pic
    * @return
    */
-  public String login(String facili,String pic)
+  public String login(JSONArray facili,String pic)
   {
 	  String urlPath=Global.FAClogin;
 	  JSONObject facCallJson=new JSONObject();

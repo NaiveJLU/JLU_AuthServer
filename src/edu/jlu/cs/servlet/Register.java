@@ -1,6 +1,9 @@
 package edu.jlu.cs.servlet;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 
 import javax.servlet.ServletException;
@@ -11,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONTokener;
 
 import edu.jlu.cs.module.DBCall;
 import edu.jlu.cs.module.FacCall;
@@ -76,17 +80,20 @@ public class Register extends HttpServlet {
 	 */
 	public void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-//		FileOutputStream fs = new FileOutputStream(new File("D:\\text.txt"));
-//		PrintStream p = new PrintStream(fs);
+		FileOutputStream fs = new FileOutputStream(new File("RegLog.txt"));
+		PrintStream p = new PrintStream(fs);
 		response.setContentType("application/json");
 		try{
 			DBCall dbCall=new DBCall();
 			FacCall facCall=new FacCall();
 			String imageJson=request.getReader().readLine();
-			JSONObject clientReq=new JSONObject(imageJson);
-			String pic=clientReq.getString("pictures");
+			JSONTokener jtk=new JSONTokener(imageJson);
+			JSONObject clientJ=(JSONObject) jtk.nextValue();
+			p.println("get request success");
+			JSONArray pic=(JSONArray) clientJ.get("pictures");
 			String facRes=facCall.register(imageJson);
 			JSONObject facJson=new JSONObject(facRes);
+			p.println("connect fac success "+facJson);
 			boolean facSuccess=facJson.getBoolean("success");
 			if(facSuccess==false)
 			{
@@ -105,9 +112,10 @@ public class Register extends HttpServlet {
 				}
 				return;
 			}
-			String facilitatorIds=facJson.getString("facilitatorIds");
+			JSONArray facilitatorIds=facJson.getJSONArray("facilitatorIds");
 			String dbRes=dbCall.register(facilitatorIds,pic);
 			JSONObject dbResJson=new JSONObject(dbRes);
+			p.println("connect DB success "+dbResJson);
 			boolean dbSuccess=dbResJson.getBoolean("success");
 			if(dbSuccess==true)
 			{
@@ -128,10 +136,10 @@ public class Register extends HttpServlet {
 			}
 			else
 			{
-				String errors=dbResJson.getString("errors");
-				JSONArray errorsJson=new JSONArray(errors);
+				JSONArray errorsJson=dbResJson.getJSONArray("errors");
 				JSONArray newrespJson=new JSONArray();
-				for(int i=1;i<=5;i++)
+				int id=errorsJson.length();
+				for(int i=1;i<=id;i++)
 				{
 					JSONObject tmp=errorsJson.getJSONObject(i-1);
 					tmp.put("pictureId", i);
@@ -157,8 +165,11 @@ public class Register extends HttpServlet {
 			}
 		}catch(JSONException e) {
 			response.setStatus(500);//json¸ñÊ½Òì³£
+			response.getWriter().write("json form error");
+			p.println("Json form Error");
 			e.printStackTrace();
 		}
+		finally{p.close();}
 	}
 
 	/**
