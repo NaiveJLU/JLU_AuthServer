@@ -84,6 +84,7 @@ public class Login extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		response.setContentType("application/json");
+		response.setHeader("Access-Control-Allow-Origin", "*");
 		FileOutputStream fs = new FileOutputStream(new File("LoginLog.txt"));
 		PrintStream p = new PrintStream(fs);
 		try{

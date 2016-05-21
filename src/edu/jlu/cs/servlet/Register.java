@@ -83,6 +83,7 @@ public class Register extends HttpServlet {
 		FileOutputStream fs = new FileOutputStream(new File("RegLog.txt"));
 		PrintStream p = new PrintStream(fs);
 		response.setContentType("application/json");
+		response.setHeader("Access-Control-Allow-Origin", "*");
 		try{
 			DBCall dbCall=new DBCall();
 			FacCall facCall=new FacCall();
